@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Math Trainer</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  #container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="question"></div>
+  <input type="text" id="answer" placeholder="Your Answer">
+  <button id="checkBtn">Check</button>
+</div>
+
+<script>
+  const questionElement = document.getElementById("question");
+  const answerElement = document.getElementById("answer");
+  const checkBtn = document.getElementById("checkBtn");
+
+  const operations = ['+', '-', '*', '/']; // Move this outside the function
+
+  let correctAnswer;
+
+  function roundToTwoDecimalPlaces(number) {
+    return Math.round(number * 100) / 100;
+  }
+
+  function generateQuestion() {
+    const selectedOperation = operations[Math.floor(Math.random() * operations.length)];
+    let num1, num2, answer;
+
+    if (selectedOperation === '+' || selectedOperation === '-') {
+      num1 = Math.floor(Math.random() * 10000);
+      num2 = Math.floor(Math.random() * 10000);
+      answer = selectedOperation === '+' ? num1 + num2 : num1 - num2;
+    } else if (selectedOperation === '*' || selectedOperation === '/') {
+      num1 = Math.floor(Math.random() * 99) + 1;
+      num2 = Math.floor(Math.random() * 99) + 1;
+      answer = selectedOperation === '*' ? num1 * num2 : roundToTwoDecimalPlaces(num1 / num2);
+    }
+
+    questionElement.textContent = `${num1} ${selectedOperation} ${num2} =`;
+    answerElement.value = "";
+    answerElement.focus();
+    correctAnswer = answer;
+  }
+
+  checkBtn.addEventListener("click", () => {
+    const userAnswer = parseFloat(answerElement.value.replace(',', '.'));
+    if (correctAnswer % 1 !== 0) {
+      const roundedUserAnswer = roundToTwoDecimalPlaces(userAnswer);
+      if (roundedUserAnswer === correctAnswer) {
+        alert("Correct!");
+      } else {
+        alert(`Incorrect. The correct answer is ${correctAnswer}`);
+      }
+    } else if (userAnswer === correctAnswer) {
+      alert("Correct!");
+    } else {
+      alert(`Incorrect. The correct answer is ${correctAnswer}`);
+    }
+    generateQuestion();
+  });
+
+  answerElement.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+      checkBtn.click();
+    }
+  });
+
+  generateQuestion();
+</script>
+</body>
+</html>
